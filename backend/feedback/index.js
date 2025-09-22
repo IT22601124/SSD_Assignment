@@ -1,8 +1,8 @@
 require("dotenv").config();
 const cors = require("cors");
 // const stripe = require("stripe")(
-//   "sk_test_51MxnUfIr55hAMMKQLxFCiGbaVy4gofEfsDFaiO8Le0TPSTqwlaVXTXdoau4xr0DegUzSSDuDUJWZr8PpaYGWzu3N008ZjqTtjz"
-// );
+// Replace line 4 with:
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const mongoose = require("mongoose");
 const feedbackRoutes = require("./routes/feedbackRoutes");
