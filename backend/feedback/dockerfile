@@ -1,0 +1,9 @@
+FROM node
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+ENV port=8081
+EXPOSE 4000
+
+CMD ["npm","start"]

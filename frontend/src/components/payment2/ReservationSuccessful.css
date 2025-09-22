@@ -1,0 +1,47 @@
+.reservation-card {
+  margin-top: 8rem;
+
+  padding: 2rem;
+
+  border-radius: 10px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  background-color: #fff;
+}
+
+.reservation-heading {
+  font-size: 2rem;
+
+  text-align: center;
+
+  margin-bottom: 1.5rem;
+}
+
+.reservation-message {
+  font-size: 1.2rem;
+
+  text-align: center;
+
+  margin-bottom: 2rem;
+}
+
+.reservation-details {
+  font-size: 1rem;
+
+  text-align: center;
+
+  line-height: 1.5;
+}
+
+.icon-container {
+  text-align: center;
+
+  margin-bottom: 1rem;
+}
+
+.checkmark-icon {
+  font-size: 6rem;
+
+  color: green;
+}
