@@ -10,6 +10,12 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 //express app
 const app = express();
 
+// Disable the X-Powered-By header
+app.disable("x-powered-by");
+
+// Your other middleware and routes
+app.use("/stripe", stripe);
+
 //middleware
 app.use(express.static("public"));
 app.use(express.json());
