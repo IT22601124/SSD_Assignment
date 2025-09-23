@@ -5,13 +5,14 @@ const cors = require("cors");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 
 //express app
 const app = express();
 
-// Disable the X-Powered-By header
-app.disable("x-powered-by");
+// Use Helmet to add various security headers, including disabling X-Powered-By
+app.use(helmet());
 
 // Your other middleware and routes
 app.use("/stripe", stripe);
