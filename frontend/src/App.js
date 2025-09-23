@@ -5,6 +5,8 @@ import { useAuthContext } from "./hooks/useAuthContext";
 import Home from "./pages/Home";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
+import OAuthCallback from "./pages/OAuthCallback";
+import CompleteProfile from "./pages/CompleteProfile";
 import NavBar from './components/NavBar';
 import SideBar from "./components/SideBar";
 
@@ -65,6 +67,8 @@ function App() {
               <Route path='/home' element={<Home2/>}/>
               <Route path="/login" element={<Login/>} />
               <Route path="/signup" element={<Signup/>} />
+              <Route path="/auth/callback" element={<OAuthCallback/>} />
+              <Route path="/complete-profile" element={<CompleteProfile/>} />
               <Route path="/buyer" element={user1 && user1.user.type == 'buyer' ? <BuyerDashboard/> : <NotAuthorized/>} />
               <Route path="/seller" element={user1 && user1.user.type == 'seller' ? <SellerDashboard/> : <NotAuthorized/>} />
               <Route path="/admin" element={user1 && user1.user.type == 'admin' ? <AdminDashboard/> : <NotAuthorized/>} />
