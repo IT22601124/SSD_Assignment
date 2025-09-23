@@ -15,7 +15,7 @@ const app = express();
 app.use(helmet());
 
 // Your other middleware and routes
-app.use("/stripe", stripe);
+// app.use("/stripe", stripe);
 
 //middleware
 app.use(express.static("public"));
