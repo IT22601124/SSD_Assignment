@@ -3,10 +3,14 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const orders = require("./routes/orders");
 const stripe = require("./routes/stripe");
+const helmet = require("helmet");
 
 const products = require("./products");
 
 const app = express();
+
+// Use Helmet to add various security headers, including disabling X-Powered-By
+app.use(helmet());
 
 require("dotenv").config();
 
