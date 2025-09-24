@@ -14,13 +14,13 @@ const app = express();
 // Use Helmet to add various security headers, including disabling X-Powered-By
 app.use(helmet());
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
-// CSRF protection middleware
-const csrfProtection = csurf({ cookie: true });
+// // CSRF protection middleware
+// const csrfProtection = csurf({ cookie: true });
 
-// Apply CSRF protection to all routes
-app.use(csrfProtection);
+// // Apply CSRF protection to all routes
+// app.use(csrfProtection);
 
 require("dotenv").config();
 
