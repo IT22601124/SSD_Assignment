@@ -3,7 +3,7 @@ import  { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import { Link } from "react-router-dom";
 
-const login = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const {login,error,isLoading} = useLogin()
@@ -46,4 +46,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;
