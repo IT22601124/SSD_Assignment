@@ -1,13 +1,13 @@
 const express = require("express");
 const Stripe = require("stripe");
 const { Order } = require("../models/Order");
-
+ 
 require("dotenv").config();
-
+ 
 const stripe = Stripe(process.env.STRIPE_KEY);
-
+ 
 const router = express.Router();
-
+ 
 router.post("/create-checkout-session", async (req, res) => {
   const customer = await stripe.customers.create({
     metadata: {
@@ -15,8 +15,48 @@ router.post("/create-checkout-session", async (req, res) => {
       cart: JSON.stringify(req.body.cartItems),
     },
   });
-
-  const line_items = req.body.cartItems.map((item) => {
+ 
+  //FIXED PART
+ 
+  const cartItems = req.body.cartItems;
+ 
+  // Check if cartItems is an array
+  if (!Array.isArray(cartItems)) {
+    return res.status(400).send({ message: "cartItems should be an array" });
+  }
+ 
+  // Validate the structure of each item
+  for (const item of cartItems) {
+    if (
+      typeof item !== "object" ||
+      !item.name ||
+      !item.image ||
+      !item.desc ||
+      !item.id ||
+      !item.price ||
+      !item.cartQuantity
+    ) {
+      return res.status(400).send({ message: "Invalid cart item structure" });
+    }
+ 
+    // Additional type checks for each property
+    if (
+      typeof item.name !== "string" ||
+      typeof item.image !== "string" ||
+      typeof item.desc !== "string" ||
+      typeof item.id !== "string" ||
+      typeof item.price !== "number" ||
+      typeof item.cartQuantity !== "number"
+    ) {
+      return res
+        .status(400)
+        .send({ message: "Invalid data types in cart item" });
+    }
+  }
+ 
+  /*******FIXED PART - END ******/
+ 
+  const line_items = cartItems.map((item) => {
     return {
       price_data: {
         currency: "usd",
@@ -33,7 +73,7 @@ router.post("/create-checkout-session", async (req, res) => {
       quantity: item.cartQuantity,
     };
   });
-
+ 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     shipping_address_collection: {
@@ -92,23 +132,23 @@ router.post("/create-checkout-session", async (req, res) => {
     success_url: `${process.env.CLIENT_URL}/checkout-success`,
     cancel_url: `${process.env.CLIENT_URL}/cart`,
   });
-
+ 
   // res.redirect(303, session.url);
   res.send({ url: session.url });
 });
-
+ 
 // Create order function
-
+ 
 const createOrder = async (customer, data) => {
   const Items = JSON.parse(customer.metadata.cart);
-
+ 
   const products = Items.map((item) => {
     return {
       productId: item.id,
       quantity: item.cartQuantity,
     };
   });
-
+ 
   const newOrder = new Order({
     userId: customer.metadata.userId,
     customerId: data.customer,
@@ -119,7 +159,7 @@ const createOrder = async (customer, data) => {
     shipping: data.customer_details,
     payment_status: data.payment_status,
   });
-
+ 
   try {
     const savedOrder = await newOrder.save();
     console.log("Processed Order:", savedOrder);
@@ -127,25 +167,25 @@ const createOrder = async (customer, data) => {
     console.log(err);
   }
 };
-
+ 
 // Stripe webhoook
-
+ 
 router.post(
   "/webhook",
   express.json({ type: "application/json" }),
   async (req, res) => {
     let data;
     let eventType;
-
+ 
     // Check if webhook signing is configured.
     let webhookSecret;
     //webhookSecret = process.env.STRIPE_WEB_HOOK;
-
+ 
     if (webhookSecret) {
       // Retrieve the event by verifying the signature using the raw body and secret.
       let event;
       let signature = req.headers["stripe-signature"];
-
+ 
       try {
         event = stripe.webhooks.constructEvent(
           req.body,
@@ -165,7 +205,7 @@ router.post(
       data = req.body.data.object;
       eventType = req.body.type;
     }
-
+ 
     // Handle the checkout.session.completed event
     if (eventType === "checkout.session.completed") {
       stripe.customers
@@ -181,9 +221,9 @@ router.post(
         })
         .catch((err) => console.log(err.message));
     }
-
+ 
     res.status(200).end();
   }
 );
-
+ 
 module.exports = router;
