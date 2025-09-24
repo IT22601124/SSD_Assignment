@@ -14,7 +14,19 @@ const PayButton = ({ cartItems }) => {
       })
       .then((response) => {
         if (response.data.url) {
-          window.location.href = response.data.url;
+          try {
+            const target = new URL(response.data.url, window.location.origin);
+
+            // Allow only same-origin or whitelisted domains
+            const allowedHosts = ["localhost:3000", "127.0.0.1:3000", "checkout.stripe.com"];
+            if (target.origin === window.location.origin || allowedHosts.includes(target.hostname)) {
+              window.location.href = target.href; // safe
+            } else {
+              console.error("Blocked unsafe redirect:", target.href);
+            }
+          } catch (e) {
+            console.error("Invalid redirect URL:", response.data.url);
+          }
         }
       })
       .catch((err) => console.log(err.message));
