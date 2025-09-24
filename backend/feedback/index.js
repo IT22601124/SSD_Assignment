@@ -6,6 +6,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const csurf = require("csurf");
+const cookieParser = require("cookie-parser");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 
 //express app
@@ -13,6 +15,14 @@ const app = express();
 
 // Use Helmet to add various security headers, including disabling X-Powered-By
 app.use(helmet());
+
+app.use(cookieParser());
+
+// CSRF protection middleware
+const csrfProtection = csurf({ cookie: true });
+
+// Apply CSRF protection to all routes
+app.use(csrfProtection);
 
 // Your other middleware and routes
 // app.use("/stripe", stripe);
