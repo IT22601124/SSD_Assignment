@@ -13,19 +13,12 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 //express app
 const app = express();
 
-// Use Helmet to add various security headers, including disabling X-Powered-By
-app.use(helmet());
+// Disable the 'X-Powered-By' header to prevent framework disclosure 
+app.disable("x-powered-by"); 
+ 
+// (optional) Use Helmet to add various security headers, including disabling X-Powered-By
+//app.use(helmet());
 
-// app.use(cookieParser());
-
-// // CSRF protection middleware
-// const csrfProtection = csurf({ cookie: true });
-
-// // Apply CSRF protection to all routes
-// app.use(csrfProtection);
-
-// Your other middleware and routes
-// app.use("/stripe", stripe);
 
 //middleware
 app.use(express.static("public"));
@@ -61,3 +54,15 @@ const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log("Listening on port", port);
 });
+
+
+// app.use(cookieParser());
+
+// // CSRF protection middleware
+// const csrfProtection = csurf({ cookie: true });
+
+// // Apply CSRF protection to all routes
+// app.use(csrfProtection);
+
+// Your other middleware and routes
+// app.use("/stripe", stripe);
