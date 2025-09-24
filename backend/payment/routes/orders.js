@@ -27,9 +27,16 @@ router.post(
       return res.status(400).send({ errors: errors.array() });
     }
 
+    // Sanitize all relevant fields
     const sanitizedBody = {
       ...req.body,
       orderDescription: sanitizeHtml(req.body.orderDescription),
+      delivery_status: sanitizeHtml(req.body.delivery_status || ""),
+      shipping: {
+        ...req.body.shipping,
+        address: sanitizeHtml(req.body.shipping?.address || ""),
+        city: sanitizeHtml(req.body.shipping?.city || ""),
+      },
     };
 
     const newOrder = new Order(sanitizedBody);
@@ -38,11 +45,12 @@ router.post(
       const savedOrder = await newOrder.save();
       res.status(200).send(savedOrder);
     } catch (err) {
-
       res.status(500).send({ error: "Unable to save order", details: err });
     }
   }
 );
+
+
 
 
 
