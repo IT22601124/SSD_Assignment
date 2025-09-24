@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const userRoutes = require('./routes/user')
+const csurf = require("csurf");
+const cookieParser = require("cookie-parser");
 
 //express app
 const app = express();
@@ -10,6 +12,13 @@ const app = express();
 app.use(helmet());
 
 app.use(express.json())
+app.use(cookieParser());
+
+// CSRF protection middleware
+const csrfProtection = csurf({ cookie: true });
+
+// Apply CSRF protection to all routes
+app.use(csrfProtection);
 
 app.use((req,res,next)=>{
     //console.log(req.path,req.method)
