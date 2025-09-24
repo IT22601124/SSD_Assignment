@@ -20,8 +20,21 @@ app.use(
   })
 );
 
+// Sanitize log input to prevent format string attacks
+const sanitizeLogInput = (input) => {
+  if (typeof input !== "string") return input;
+  // Remove dangerous format specifiers and control chars
+  return input.replace(/[%\n\r\t]/g, "");
+};
+
+// Middleware with sanitized logging
 app.use((req, res, next) => {
-  console.log(req.path, req.method);
+  const safePath = sanitizeLogInput(req.path);
+  const safeMethod = sanitizeLogInput(req.method);
+ 
+  // Safe logging: inputs sanitized, printed as separate args
+  console.log("Incoming request:", safePath, safeMethod);
+ 
   next();
 });
 
