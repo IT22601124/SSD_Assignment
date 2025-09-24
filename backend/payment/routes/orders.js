@@ -1,16 +1,44 @@
 const { Order } = require("../models/Order");
 const router = require("express").Router();
+const sanitizeHtml = require("sanitize-html");
+const { body, validationResult } = require("express-validator");
 
-router.post("/", async (req, res) => {
-  const newOrder = new Order(req.body);
+// router.post("/", async (req, res) => {
+//   const newOrder = new Order(req.body);
 
-  try {
-    const savedOrder = await newOrder.save();
-    res.status(200).send(savedOrder);
-  } catch (err) {
-    res.status(500).send(err);
+//   try {
+//     const savedOrder = await newOrder.save();
+//     res.status(200).send(savedOrder);
+//   } catch (err) {
+//     res.status(500).send(err);
+//   }
+// });
+
+router.post(
+  "/",
+  body("orderDescription").isString().notEmpty().trim(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).send({ errors: errors.array() });
+    }
+
+    const sanitizedBody = {
+      ...req.body,
+      orderDescription: sanitizeHtml(req.body.orderDescription),
+    };
+
+    const newOrder = new Order(sanitizedBody);
+
+    try {
+      const savedOrder = await newOrder.save();
+      res.status(200).send(savedOrder);
+    } catch (err) {
+      res.status(500).send({ error: "Unable to save order", details: err });
+    }
   }
-});
+);
+
 
 //UPDATE
 router.put("/:id", async (req, res) => {
