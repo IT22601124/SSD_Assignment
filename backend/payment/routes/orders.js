@@ -1,7 +1,11 @@
 const { Order } = require("../models/Order");
 const router = require("express").Router();
 const sanitizeHtml = require("sanitize-html");
+
+
+
 const { body, param, validationResult } = require("express-validator");
+
 
 // router.post("/", async (req, res) => {
 //   const newOrder = new Order(req.body);
@@ -34,10 +38,14 @@ router.post(
       const savedOrder = await newOrder.save();
       res.status(200).send(savedOrder);
     } catch (err) {
-      res.status(500).send({ error: "Unable to save order" });
+
+      res.status(500).send({ error: "Unable to save order", details: err });
     }
   }
 );
+
+
+
 
 //UPDATE
 // router.put("/:id", async (req, res) => {
