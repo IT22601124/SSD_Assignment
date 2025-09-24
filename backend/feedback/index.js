@@ -5,10 +5,27 @@ const cors = require("cors");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
+const csurf = require("csurf");
+const cookieParser = require("cookie-parser");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 
 //express app
 const app = express();
+
+// Use Helmet to add various security headers, including disabling X-Powered-By
+app.use(helmet());
+
+app.use(cookieParser());
+
+// CSRF protection middleware
+const csrfProtection = csurf({ cookie: true });
+
+// Apply CSRF protection to all routes
+app.use(csrfProtection);
+
+// Your other middleware and routes
+// app.use("/stripe", stripe);
 
 //middleware
 app.use(express.static("public"));
@@ -20,8 +37,21 @@ app.use(
   })
 );
 
+// Sanitize log input to prevent format string attacks
+const sanitizeLogInput = (input) => {
+  if (typeof input !== "string") return input;
+  // Remove dangerous format specifiers and control chars
+  return input.replace(/[%\n\r\t]/g, "");
+};
+
+// Middleware with sanitized logging
 app.use((req, res, next) => {
-  console.log(req.path, req.method);
+  const safePath = sanitizeLogInput(req.path);
+  const safeMethod = sanitizeLogInput(req.method);
+ 
+  // Safe logging: inputs sanitized, printed as separate args
+  console.log("Incoming request:", safePath, safeMethod);
+ 
   next();
 });
 
